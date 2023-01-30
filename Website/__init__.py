@@ -13,7 +13,7 @@ def create_app():
 
     app.config['SECRET_KEY'] = "my_secret_key"
     app.config["SQLALCHEMY_DATABASE_URI"] = f'sqlite:///{DB_NAME}'
-
+    app.config["UPLOAD_FOLDER"] = "user_folder"
     db.init_app(app)
 
     from .views import views

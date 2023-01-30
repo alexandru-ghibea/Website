@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template, request, flash, jsonify
+from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
 from .models import Note, File
 from . import db
 import json
-
+import os
 views = Blueprint("views", __name__)
 
 
@@ -13,6 +13,7 @@ def home():
     if request.method == "POST":
         note = request.form.get("notes")
         file = request.files.get("csv_file")
+        email = current_user.email
         if len(note) < 1:
             flash("Note is to short", category="error")
         else:
@@ -21,7 +22,11 @@ def home():
             db.session.add(new_note)
             db.session.add(uploaded)
             db.session.commit()
-            flash("Note added!", category="success")
+            email_folder = f"user_folder/{email}"
+            if not os.path.exists(email_folder):
+                flash("Something went wrong")
+            file.save(f"{email_folder}/{file.filename}")
+            flash("Note and File uploaded!", category="success")
     return render_template('home.html', user=current_user)
 
 

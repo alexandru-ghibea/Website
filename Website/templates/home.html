@@ -14,19 +14,13 @@
     <textarea name="notes" id="notes" class = "form-control" required></textarea>
     <br />
     <div align="center">
-      <input type="file" id="file" name="csv_file" accept=".csv" multiple />
+      <input type="file" id="file" name="csv_file" accept=".csv" required />
     </div>
     <br />
     <div align="center">
       <button type="submit" class="btn btn-primary">Add Note and Upload Files</button>
     </div>
   </form>
-<!-- form for upload .csv file -->
-<!-- <form align="center" method="POST" enctype="multipart/form-data" required>
-    <input type="file" id="file" name="file">
-    <input type="submit" value="Upload">
-</form> -->
-
 
 
 {% endblock %}
