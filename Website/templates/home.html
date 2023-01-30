@@ -1,22 +1,32 @@
 {% extends 'base.html' %} {% block title %}Home{% endblock %}
 {% block content %}
-<h1 align="center">Notes</h1>
+<h1 align="center">Notes and Uploads</h1>
 <ul class="list-group list-group-flash" id="notes">
     {% for note in user.notes %}
     <li class="list-group-item">{{ note.data }}
-        <button type="button" class="closse" onClick="deleteNote({{ note.id }})">
+        <button type="button" class="closse" onclick="deleteNote({{ note.id }})">
             <span aria-hidden="true">&times;</span>
         </button>
     </li>
     {% endfor %}
 </ul>
-<form method="post">
-    <textarea name="notes" id="notes" class = "form-control"></textarea>
+<form method="POST" enctype="multipart/form-data">
+    <textarea name="notes" id="notes" class = "form-control" required></textarea>
     <br />
     <div align="center">
-        <button type="submit" class="btn btn-primary">Add Note</button>
+      <input type="file" id="file" name="csv_file" accept=".csv" multiple />
     </div>
-</form>
- 
+    <br />
+    <div align="center">
+      <button type="submit" class="btn btn-primary">Add Note and Upload Files</button>
+    </div>
+  </form>
+<!-- form for upload .csv file -->
+<!-- <form align="center" method="POST" enctype="multipart/form-data" required>
+    <input type="file" id="file" name="file">
+    <input type="submit" value="Upload">
+</form> -->
+
+
 
 {% endblock %}
