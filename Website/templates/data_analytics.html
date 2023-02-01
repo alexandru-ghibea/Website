@@ -11,12 +11,12 @@
         <th class="table-light">Date</th>
         <th class="table-light">Access Data</th>
     </tr>
-{% for example in examples %}
+{% for file in csv_file %}
 <tr>
-    <td>{{ example.id }}</td>
-    <td>{{ example.data }}</td>
-    <td>{{ example.date }}</td>
-    <td><a href="{{ url_for('views.view_file', id=example.id) }}">View Data</a></td>
+    <td>{{ file.id }}</td>
+    <td>{{ file.data }}</td>
+    <td>{{ file.date }}</td>
+    <td><a href="{{ url_for('views.view_file', id=file.id) }}">View Data</a></td>
 {%endfor%}
 </table>
 
