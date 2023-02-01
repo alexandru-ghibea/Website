@@ -1,19 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title> Table </title>              
-    </head>
-    <body>
-        <div align="center">
-            <table>
-                <h1>
-                <!--Displaying the converted table-->
-                     {% for table in tables %}
-                    <h2>{{titles[loop.index]}}</h2>                            
-                    {{ table|safe }}
-                    {% endfor %}     
-                </h1> 
-            </table>
-        </div>
-    </body>
-</html>
+{% extends 'base.html' %} {% block title %}Home{% endblock %}
+{% block content %}
+<h1 align="center" >Your Files</h1>
+<br />
+<table class="table table-bordered table-hover">
+
+    <caption> Files Uploaded</caption>
+    <tr>
+        <th class="table-light"> # </th>
+        <th class="table-light">File Name</th>
+        <th class="table-light">Date</th>
+        <th class="table-light">Access Data</th>
+    </tr>
+{% for example in examples %}
+<tr>
+    <td>{{ example.id }}</td>
+    <td>{{ example.data }}</td>
+    <td>{{ example.date }}</td>
+    <td><a href="{{ url_for('views.view_file', id=example.id) }}">View Data</a></td>
+{%endfor%}
+</table>
+
+{% endblock %}

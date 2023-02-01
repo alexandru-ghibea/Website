@@ -4,8 +4,6 @@ from .models import Note, File
 from . import db
 import json
 import os
-import pandas as pd
-import matplotlib.pyplot as plt
 views = Blueprint("views", __name__)
 
 
@@ -47,19 +45,11 @@ def delete_note():
 
 @views.route('data_analytics', methods=["POST", "GET"])
 def data_analytics():
-    try:
-        df = pd.read_csv(
-            '/Users/alexghibea/Documents/Pycharm/Netflix/user_folder/ghibea@gmail.com/ViewingActivity.csv')
-    # df = df.drop(columns=["Latest Bookmark"])
-    except FileNotFoundError as err:
-        flash('No file found')
-    try:
-        df.to_csv(
-            '/Users/alexghibea/Documents/Pycharm/Netflix/user_folder/ghibea@gmail.com/ViewingActivity.csv', index=None)
-    except FileNotFoundError as err:
-        flash('No file found')
-    if request.method == "GET":
-        data = pd.read_csv(
-            "/Users/alexghibea/Documents/Pycharm/Netflix/user_folder/ghibea@gmail.com/ViewingActivity.csv")
+    examples = File.query.all()
+    return render_template("data_analytics.html", user=current_user, examples=examples)
 
-    return render_template('data_analytics.html', tables=[data.to_html()], titles=[''])
+
+@views.route('/file/<int:id>', methods=["GET"])
+def view_file(id):
+    file = File.query.get(id)
+    return render_template("data_analytics.html", file=file, user=current_user)
