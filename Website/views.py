@@ -4,12 +4,14 @@ from .models import Note, File
 from . import db
 import json
 import os
+import pandas as pd
+import matplotlib.pyplot as plt
 views = Blueprint("views", __name__)
 
 
 @views.route("/", methods=["GET", "POST"])
 @login_required
-def home():
+def index():
     if request.method == "POST":
         note = request.form.get("notes")
         file = request.files.get("csv_file")
@@ -27,7 +29,7 @@ def home():
                 flash("Something went wrong")
             file.save(f"{email_folder}/{file.filename}")
             flash("Note and File uploaded!", category="success")
-    return render_template('home.html', user=current_user)
+    return render_template('index.html', user=current_user)
 
 
 @views.route('/delete-note', methods=["POST"])
@@ -41,3 +43,23 @@ def delete_note():
             db.session.commit()
 
     return jsonify({})
+
+
+@views.route('data_analytics', methods=["POST", "GET"])
+def data_analytics():
+    try:
+        df = pd.read_csv(
+            '/Users/alexghibea/Documents/Pycharm/Netflix/user_folder/ghibea@gmail.com/ViewingActivity.csv')
+    # df = df.drop(columns=["Latest Bookmark"])
+    except FileNotFoundError as err:
+        flash('No file found')
+    try:
+        df.to_csv(
+            '/Users/alexghibea/Documents/Pycharm/Netflix/user_folder/ghibea@gmail.com/ViewingActivity.csv', index=None)
+    except FileNotFoundError as err:
+        flash('No file found')
+    if request.method == "GET":
+        data = pd.read_csv(
+            "/Users/alexghibea/Documents/Pycharm/Netflix/user_folder/ghibea@gmail.com/ViewingActivity.csv")
+
+    return render_template('data_analytics.html', tables=[data.to_html()], titles=[''])

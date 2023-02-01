@@ -22,7 +22,7 @@
             {% if user.is_authenticated %}
             <a class="nav-item nav-link" id="home"  href="/">Welcome back: <strong>{{user.email}}</strong></a>
             <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
-
+            <a class="nav-item nav-link" id="data_analytics" href="/data_analytics">Data Analytics</a>
             {% else %}
             <a class="nav-item nav-link" id="login" href="/login">Login</a>
             <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
