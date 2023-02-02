@@ -45,7 +45,7 @@ def delete_note():
 
 @views.route('data_analytics', methods=["POST", "GET"])
 def data_analytics():
-    csv_file = File.query.all()
+    csv_file = File.query.filter_by(user_id=current_user.id)
     return render_template("data_analytics.html", user=current_user, csv_file=csv_file)
 
 
