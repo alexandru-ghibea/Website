@@ -1,9 +1,13 @@
-from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
+from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for, send_from_directory, send_file
 from flask_login import login_required, current_user
 from .models import Note, File
 from . import db
 import json
 import os
+import io
+import csv
+import pandas as pd
+from IPython.display import display
 views = Blueprint("views", __name__)
 
 
@@ -22,7 +26,7 @@ def index():
             db.session.add(new_note)
             db.session.add(uploaded)
             db.session.commit()
-            email_folder = f"user_folder/{email}"
+            email_folder = f"Website/static/uploads/{email}"
             if not os.path.exists(email_folder):
                 flash("Something went wrong")
             file.save(f"{email_folder}/{file.filename}")
@@ -49,7 +53,25 @@ def data_analytics():
     return render_template("data_analytics.html", user=current_user, csv_file=csv_file)
 
 
-@views.route('/file/<int:id>', methods=["GET"])
-def view_file(id):
-    file = File.query.get(id)
-    return render_template("data_analytics.html", file=file, user=current_user)
+@views.route("/content", methods=["GET", "POST"])
+def see_content():
+    csv_file = File.query.filter_by(user_id=current_user.id)
+    filename = request.args.get('filename')
+    file_path = f"Website/static/uploads/{current_user.email}/{filename}"
+    if filename == "AccountDetails.csv":
+        account_details = pd.read_csv(file_path)
+        account_details = account_details.drop(columns=['First Name', 'Last Name', 'Email Address', 'Phone Number', 'Cookie Disclosure', 'Netflix Updates',
+                                                        'Now On Netflix', 'Netflix Offers', 'Netflix Surveys',
+                                                        'Netflix Kids And Family', 'Sms Account Related',
+                                                        'Sms Content Updates And Special Offers', 'Test Participation',
+                                                        'Marketing Communications Matched Identifiers', 'Extra Member Account',
+                                                        'Extra Member Primary Account Owner'])
+        return render_template("content.html", user=current_user, tables=[account_details.to_html(classes="data")], user_id=current_user, csv_file=csv_file, titles=account_details.columns.values)
+    if filename == "Profiles.csv":
+        profiles = pd.read_csv(file_path).drop(columns=['Email Address', 'Game Handle', 'Primary Lang', 'Has Auto Playback',
+                                                        'Max Stream Quality', 'Profile Lock Enabled', 'Profile Transferred',
+                                                        'Profile Transfer Time', 'Profile Transferred From Account',
+                                                        'Profile Transferred To Account', 'Date Of Birth', 'Gender', 'Opt-Out'])
+        return render_template("content.html", user=current_user, tables=[profiles.to_html(classes="data")], user_id=current_user, csv_file=csv_file, titles=profiles.columns.values)
+
+    return "404 File not found", 404

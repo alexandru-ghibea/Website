@@ -1,24 +1,28 @@
 {% extends 'base.html' %} {% block title %}Home{% endblock %}
 {% block content %}
-<h1 align="center" >Your Files</h1>
+<!-- <h1 align="center" >Your Files</h1> -->
 <br />
 <table class="table table-bordered table-hover">
 
     <caption> Files Uploaded</caption>
     <tr>
-        <th class="table-light"> # </th>
+        <!-- <th class="table-light"> # </th> -->
         <th class="table-light">File Name</th>
         <th class="table-light">Date</th>
         <th class="table-light">Access Data</th>
     </tr>
 
-{% for file in csv_file %}
-<tr>
-    <td>{{ file.id }}</td>
-    <td>{{ file.data }}</td>
-    <td>{{ file.date }}</td>
-    <td><a href="{{ url_for('views.view_file', id=file.id) }}">View Data</a></td>
-{%endfor%}
+    {% for file in csv_file %}
+    <tr>
+        <td>{{ file.data }}</td>
+        <td>{{ file.date }}</td>
+        <td>
+            <form action="{{ url_for('views.see_content') }}" method="GET">
+                <input type="hidden" name="filename" value="{{ file.data }}">
+                <button type="submit" class='btn btn-primary'>Go to data</button>
+            </form>
+        </td>
+    {% endfor %}
 </table>
 
 {% endblock %}
