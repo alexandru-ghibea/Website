@@ -5,6 +5,7 @@ from . import db
 import json
 import os
 import pandas as pd
+from werkzeug.utils import secure_filename
 from IPython.display import display
 views = Blueprint("views", __name__)
 
@@ -24,12 +25,14 @@ def index():
             db.session.add(new_note)
             db.session.add(uploaded)
             db.session.commit()
-            email_folder = os.path.join("Website", "static", "uploads", email)
-            if not os.path.exists(email_folder):
-                flash("Something went wrong")
-            file_path = os.path.join(email_folder, file.filename)
-            file.save(file_path)
-            flash("Note and File uploaded!", category="success")
+            email_folder = os.path.abspath(f"Website/static/uploads/{email}")
+            file_path = os.path.abspath(os.path.join(
+                email_folder, secure_filename(file.filename)))
+            if not file_path.startswith(email_folder):
+                flash("Invalid file path", category="error")
+            else:
+                file.save(file_path)
+                flash("Note and File uploaded!", category="success")
     return render_template('index.html', user=current_user)
 
 
@@ -42,7 +45,6 @@ def delete_note():
         if note.user_id == current_user.id:
             db.session.delete(note)
             db.session.commit()
-
     return jsonify({})
 
 
@@ -56,7 +58,9 @@ def data_analytics():
 def see_content():
     csv_file = File.query.filter_by(user_id=current_user.id)
     filename = request.args.get('filename')
-    file_path = f"Website/static/uploads/{current_user.email}/{filename}"
+    file_path = os.path.abspath(
+        f"Website/static/uploads/{current_user.email}/{filename}")
+
     if filename == "AccountDetails.csv":
         account_details = pd.read_csv(file_path)
         account_details = account_details.drop(columns=['First Name', 'Last Name', 'Email Address', 'Phone Number', 'Cookie Disclosure', 'Netflix Updates',
