@@ -56,7 +56,7 @@ def sign_up():
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
-            user_folder = f"Website/static/uploads/{email}"
+            user_folder = os.path.join("Website", "static", "uploads", email)
             os.makedirs(user_folder)
             flash('Account created!', category='success')
             return redirect(url_for('views.index'))

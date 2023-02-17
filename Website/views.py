@@ -24,10 +24,11 @@ def index():
             db.session.add(new_note)
             db.session.add(uploaded)
             db.session.commit()
-            email_folder = f"Website/static/uploads/{email}"
+            email_folder = os.path.join("Website", "static", "uploads", email)
             if not os.path.exists(email_folder):
                 flash("Something went wrong")
-            file.save(f"{email_folder}/{file.filename}")
+            file_path = os.path.join(email_folder, file.filename)
+            file.save(file_path)
             flash("Note and File uploaded!", category="success")
     return render_template('index.html', user=current_user)
 
